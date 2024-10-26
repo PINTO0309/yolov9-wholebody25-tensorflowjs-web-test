@@ -1,6 +1,8 @@
 # yolov9-wholebody25-tensorflowjs-web-test
 A test environment running yolov9-wholebody25 on TensorFlow.js.
 
+https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
+
 ```
 pip install -U onnx2tf
 
