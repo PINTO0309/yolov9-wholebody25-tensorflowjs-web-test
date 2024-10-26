@@ -37,3 +37,9 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 - Results
 
     https://github.com/user-attachments/assets/64f1e6b1-2cca-4960-93a0-66f3c95c89cb
+
+- Check if your browser supports WebGL hardware acceleration
+
+    https://get.webgl.org/
+
+    ![image](https://github.com/user-attachments/assets/19e42666-e334-49d2-a1e9-c08121b9f709)
