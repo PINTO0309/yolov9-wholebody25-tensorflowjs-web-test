@@ -30,7 +30,7 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
     python -m http.server
     ```
 
-- Displaying a web page (with TensorFlow.js + USB Camera)
+- Displaying a web page (with TensorFlow.js + WebGL backend (AUTO) + USB Camera)
 
     http://localhost:8000/test-tfjs-usbcam.html
 
