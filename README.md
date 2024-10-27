@@ -36,6 +36,10 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 
     http://localhost:8000/test-tfjs-usbcam.html
 
+    or
+
+    http://localhost:8000/test-tfjs-usbcam-low.html
+
 - Results
 
     - Normal Resolution Mode 640x480
