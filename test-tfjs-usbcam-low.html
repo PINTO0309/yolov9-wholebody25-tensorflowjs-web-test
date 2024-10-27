@@ -57,7 +57,7 @@
     // TensorFlow.js モデルのロード
     async function loadModel() {
       try {
-        model = await tf.loadGraphModel('tfjs_model/model.json'); // 適切なパスに変更
+        model = await tf.loadGraphModel('tfjs_model_low/model.json'); // 適切なパスに変更
         return model;
       } catch (err) {
         console.error('モデルのロードに失敗しました:', err);
