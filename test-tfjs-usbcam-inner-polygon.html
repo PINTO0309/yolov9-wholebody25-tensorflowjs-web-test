@@ -24,7 +24,8 @@
 
   <div id="alert">Entered the area</div>
   <video id="video" width="640" height="480" autoplay></video>
-  <canvas id="output-canvas"></canvas>
+  <canvas id="output-canvas" width="640" height="480"></canvas>
+  <button id="reset-button">Reset Polygons</button>
   <div id="inference-time" style="margin-top: 10px;"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
@@ -86,28 +87,95 @@
 
     const threshold = 0.35;
 
-    // 領域定義 (五角形と六角形)
-    const polygons = [
-      [[100, 100], [150, 50], [200, 100], [180, 160], [120, 160]], // 五角形
-      [[300, 300], [350, 250], [400, 300], [380, 360], [320, 360], [280, 320]] // 六角形
-    ];
+    let currentPolygon = [];
+    let polygons = [];
+    let isDrawing = false;
+
+    const canvas = document.getElementById('output-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // マウスクリックで頂点を追加
+    canvas.addEventListener('click', function (e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      currentPolygon.push([x, y]);
+      isDrawing = true;
+      drawCurrentPolygon();
+    });
+
+    // ダブルクリックで多角形を確定
+    canvas.addEventListener('dblclick', function (e) {
+      if (currentPolygon.length >= 3) {
+        polygons.push([...currentPolygon]);  // 多角形を確定
+        currentPolygon = [];  // 新しい多角形に向けてリセット
+        isDrawing = false;
+        drawPolygons(ctx, polygons);  // 確定した多角形を描画
+      }
+    });
+
+    // リセットボタンで多角形をリセット
+    document.getElementById('reset-button').addEventListener('click', function () {
+      polygons = [];
+      currentPolygon = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    // 現在の多角形の頂点を描画する関数
+    function drawCurrentPolygon() {
+      if (currentPolygon.length === 0) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPolygons(ctx, polygons);  // 確定した多角形も再描画
+
+      ctx.beginPath();
+      ctx.moveTo(currentPolygon[0][0], currentPolygon[0][1]);
+
+      for (let i = 1; i < currentPolygon.length; i++) {
+        ctx.lineTo(currentPolygon[i][0], currentPolygon[i][1]);
+      }
+
+      ctx.strokeStyle = 'blue';
+      ctx.setLineDash([5, 5]);  // 点線を設定
+      ctx.stroke();
+      ctx.setLineDash([]);  // 点線を解除
+    }
+
+    // 確定した多角形を描画する関数
+    function drawPolygons(ctx, polygons) {
+      polygons.forEach(polygon => {
+        ctx.beginPath();
+        ctx.moveTo(polygon[0][0], polygon[0][1]);
+
+        for (let i = 1; i < polygon.length; i++) {
+          ctx.lineTo(polygon[i][0], polygon[i][1]);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = 'red';  // 確定した多角形は赤で描画
+        ctx.stroke();
+      });
+    }
 
     let frameCounters = {};  // classId 21 の物体が領域に入ったか追跡するオブジェクト
 
-    // バウンディングボックス描画
     function renderBoundingBoxes(output, videoElement) {
-      const canvas = document.getElementById('output-canvas');
       const width = videoElement.videoWidth;
       const height = videoElement.videoHeight;
       canvas.width = width;
       canvas.height = height;
 
-      const ctx = canvas.getContext('2d');
+      // Webカメラの映像を描画
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-      // 領域を点線で描画
+      // 確定した多角形を描画
       drawPolygons(ctx, polygons);
+
+      // 現在描画中の多角形を描画
+      if (isDrawing) {
+        drawCurrentPolygon();
+      }
 
       // 推論
       const boxesData = output.arraySync();
@@ -142,11 +210,10 @@
           ctx.fillText(`Class: ${classId} Score: ${score.toFixed(2)}`, bx1, by1 - 5);
 
           // classId 21 の物体に対して領域内侵入を判定
-          if (classId === 21) {
+          if (classId === 21 && score > threshold) {
             const box = [bx1, by1, bx2, by2];
 
             for (let j = 0; j < polygons.length; j++) {
-              // 初めての物体の場合、frameCounters[i]が未定義かもしれないので初期化
               if (!frameCounters[i]) {
                 frameCounters[i] = {};  // 物体ごとのカウンタを初期化
               }
@@ -171,12 +238,25 @@
       cleanupFrameCounters(output);
     }
 
-    // 領域を点線で描画
-    function drawPolygons(ctx, polygons) {
-      ctx.setLineDash([5, 5]);  // 点線を設定
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'red';  // 線の色
+    // 現在の多角形の頂点を描画する関数
+    function drawCurrentPolygon() {
+      if (currentPolygon.length === 0) return;
 
+      ctx.beginPath();
+      ctx.moveTo(currentPolygon[0][0], currentPolygon[0][1]);
+
+      for (let i = 1; i < currentPolygon.length; i++) {
+        ctx.lineTo(currentPolygon[i][0], currentPolygon[i][1]);
+      }
+
+      ctx.strokeStyle = 'blue';
+      ctx.setLineDash([5, 5]);  // 点線を設定
+      ctx.stroke();
+      ctx.setLineDash([]);  // 点線を解除
+    }
+
+    // 確定した多角形を描画する関数
+    function drawPolygons(ctx, polygons) {
       polygons.forEach(polygon => {
         ctx.beginPath();
         ctx.moveTo(polygon[0][0], polygon[0][1]);
@@ -185,10 +265,9 @@
           ctx.lineTo(polygon[i][0], polygon[i][1]);
         }
         ctx.closePath();
+        ctx.strokeStyle = 'red';  // 確定した多角形は赤で描画
         ctx.stroke();
       });
-
-      ctx.setLineDash([]);  // 点線を解除
     }
 
     // バウンディングボックスと多角形の重なり判定 (Ray-Casting アルゴリズム)
