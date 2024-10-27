@@ -204,6 +204,16 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
+      // 元のconsole.warn()を保存
+      const originalWarn = console.warn;
+
+      // 特定のワーニングメッセージを抑制
+      console.warn = (message) => {
+        if (!message.includes("This model execution did not contain any nodes with control flow")) {
+          originalWarn(message);
+        }
+      };
+
       // 確定した多角形を描画
       drawPolygons(ctx, polygons);
 
