@@ -32,6 +32,8 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 
 - Displaying a web page (with TensorFlow.js + WebGL backend (AUTO) + USB Camera)
 
+    If your browser cache is enabled, model loading and inference may fail. If this does not work, try starting your browser in an incognito window or in secret mode before accessing the URL below.
+  
     http://localhost:8000/test-tfjs-usbcam.html
 
 - Results
