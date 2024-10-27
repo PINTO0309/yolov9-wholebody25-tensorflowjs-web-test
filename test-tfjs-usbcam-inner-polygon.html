@@ -26,6 +26,8 @@
   <video id="video" width="640" height="480" autoplay></video>
   <canvas id="output-canvas" width="640" height="480"></canvas>
   <button id="reset-button">Reset Polygons</button>
+  <button id="save-json-button">Save Polygons to JSON</button>
+  <button id="load-json-button">Load Polygons from JSON</button>
   <div id="inference-time" style="margin-top: 10px;"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
@@ -102,7 +104,7 @@
 
       currentPolygon.push([x, y]);
       isDrawing = true;
-      drawCurrentPolygon();
+      drawCurrentPolygon(video);
     });
 
     // ダブルクリックで多角形を確定
@@ -123,11 +125,14 @@
     });
 
     // 現在の多角形の頂点を描画する関数
-    function drawCurrentPolygon() {
+    function drawCurrentPolygon(videoElement) {
       if (currentPolygon.length === 0) return;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawPolygons(ctx, polygons);  // 確定した多角形も再描画
+      // 背景のカメラ映像を描画
+      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+      // 確定した多角形も再描画
+      drawPolygons(ctx, polygons);
 
       ctx.beginPath();
       ctx.moveTo(currentPolygon[0][0], currentPolygon[0][1]);
@@ -157,6 +162,36 @@
       });
     }
 
+    // JSONに保存するボタン
+    document.getElementById('save-json-button').addEventListener('click', function () {
+      const dataStr = JSON.stringify(polygons);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'polygons.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // JSONから読み込むボタン
+    document.getElementById('load-json-button').addEventListener('click', function () {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/json';
+      input.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          polygons = JSON.parse(event.target.result);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          drawPolygons(ctx, polygons);
+        };
+        reader.readAsText(file);
+      });
+      input.click();
+    });
+
     let frameCounters = {};  // classId 21 の物体が領域に入ったか追跡するオブジェクト
 
     function renderBoundingBoxes(output, videoElement) {
@@ -174,7 +209,7 @@
 
       // 現在描画中の多角形を描画
       if (isDrawing) {
-        drawCurrentPolygon();
+        drawCurrentPolygon(videoElement);
       }
 
       // 推論
@@ -236,38 +271,6 @@
 
       // 古い物体のデータをクリーンアップ
       cleanupFrameCounters(output);
-    }
-
-    // 現在の多角形の頂点を描画する関数
-    function drawCurrentPolygon() {
-      if (currentPolygon.length === 0) return;
-
-      ctx.beginPath();
-      ctx.moveTo(currentPolygon[0][0], currentPolygon[0][1]);
-
-      for (let i = 1; i < currentPolygon.length; i++) {
-        ctx.lineTo(currentPolygon[i][0], currentPolygon[i][1]);
-      }
-
-      ctx.strokeStyle = 'blue';
-      ctx.setLineDash([5, 5]);  // 点線を設定
-      ctx.stroke();
-      ctx.setLineDash([]);  // 点線を解除
-    }
-
-    // 確定した多角形を描画する関数
-    function drawPolygons(ctx, polygons) {
-      polygons.forEach(polygon => {
-        ctx.beginPath();
-        ctx.moveTo(polygon[0][0], polygon[0][1]);
-
-        for (let i = 1; i < polygon.length; i++) {
-          ctx.lineTo(polygon[i][0], polygon[i][1]);
-        }
-        ctx.closePath();
-        ctx.strokeStyle = 'red';  // 確定した多角形は赤で描画
-        ctx.stroke();
-      });
     }
 
     // バウンディングボックスと多角形の重なり判定 (Ray-Casting アルゴリズム)
