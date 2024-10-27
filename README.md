@@ -58,4 +58,4 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 
 - Extra
 
-    https://github.com/user-attachments/assets/e5433120-2575-480a-9076-730948f9a5e7
+    https://github.com/user-attachments/assets/1ce0d11e-e90c-47af-be77-5815b19e6546
