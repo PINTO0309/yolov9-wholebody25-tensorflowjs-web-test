@@ -114,11 +114,12 @@
 
       const boxesData = output.arraySync(); // テンソルのデータを取得
 
+      // レンダリング除外クラスID
+      const excludedIds = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23];
+
       for (let i = 0; i < boxesData.length; i++) {
         const [batchno, classId, score, x1, y1, x2, y2] = boxesData[i];
 
-        // レンダリング除外クラスID
-        const excludedIds = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23];
         if (excludedIds.includes(classId)) {
           continue;
         }
