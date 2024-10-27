@@ -42,7 +42,9 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 
         https://github.com/user-attachments/assets/64f1e6b1-2cca-4960-93a0-66f3c95c89cb
 
-    - Low Resolution Mode
+    - Low Resolution Mode 320x256
+
+        https://github.com/user-attachments/assets/d98c06ef-2869-4843-aea5-c92b9f8033c1
 
 - Check if your browser supports WebGL hardware acceleration
 
