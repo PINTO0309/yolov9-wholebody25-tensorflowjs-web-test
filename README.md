@@ -60,4 +60,4 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 
     http://localhost:8000/test-tfjs-usbcam-inner-polygon.html
 
-    https://github.com/user-attachments/assets/1ce0d11e-e90c-47af-be77-5815b19e6546
+    https://github.com/user-attachments/assets/5ec2fea4-b0e5-449b-ae29-b4b6172cac85
