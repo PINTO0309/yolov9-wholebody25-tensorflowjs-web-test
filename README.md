@@ -58,6 +58,8 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
 
 - Extra
 
+    This is a game where you interactively draw a polygonal area with a mouse click or double click and a message is displayed when your hand enters the area.
+
     http://localhost:8000/test-tfjs-usbcam-inner-polygon.html
 
     https://github.com/user-attachments/assets/d0c557fe-1a2d-4e8f-9db5-ded08d4b01d1
