@@ -15,6 +15,7 @@ https://github.com/PINTO0309/PINTO_model_zoo/tree/main/459_YOLOv9-Wholebody25
     tensorflow_hub
 
     onnx2tf -i yolov9_n_wholebody25_post_0100_1x3x480x640.onnx -cotof -dgc
+    onnx2tf -i yolov9_n_wholebody25_post_0100_1x3x256x320.onnx -cotof -dgc
 
     tensorflowjs_converter \
     --input_format tf_saved_model \
